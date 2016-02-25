@@ -3,11 +3,11 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 from numpy import sin, cos
 # Defining constants
-m1 = 1
-m2 = 1
-g = 10
-l1 = 1
-l2 = 1
+m1 = 0.000001
+m2 = 1.0
+g = 10.0
+l1 = 1.0
+l2 = 1.0
 
 def evolution(y, t):
     dydt = np.zeros(4)
@@ -20,7 +20,7 @@ def evolution(y, t):
     sin_y2    = sin(y[1])
     
     # Determinant
-    D = 1#(m1 + m2) * l1 * l2 - m2 * l1 * l2 * cos_y1_y2 ** 2
+    D = (m1 + m2) * l1 * l2 - m2 * l1 * l2 * cos_y1_y2 ** 2
     
     dydt[2] = (- l2**2 * m2 * sin_y1_y2 * y[3]**2 - ( m1 + m2 ) * l2 * g * sin_y1 - m2 * l1 * l2 * y[2] **2 * sin_y1_y2 * cos_y1_y2 + m2 * l2 * g * sin_y2 * cos_y1_y2)/D
     dydt[3] = (l1 * l2 * m2 * sin_y1_y2 * cos_y1_y2 + ( m1 + m2 ) * l1 * g * sin_y1 * cos_y1_y2 + ( m1 + m2 ) * l1**2 * y[2] **2 * sin_y1_y2 - g * ( m1 + m2 ) * l1 * sin_y2)/D
@@ -42,21 +42,23 @@ def energy(y):
     x2dot = l1 * cos( y[:,0] ) * y[:,2] + l2 * cos( y[:,1] ) * y[:,3]
     y2dot = l1 * sin( y[:,0] ) * y[:,2] + l2 * sin( y[:,1] ) * y[:,3]
     
-    T1 = m1 * ( l1 * y[:,2] ) **2 /2
-    T2 = m2 * ( x2dot**2 + y2dot**2) / 2
+    T1 = m1 * ( l1 * y[:,2] ) **2 /2.0
+    T2 = m2 * ( x2dot**2 + y2dot**2) / 2.0
     V1 = m1 * g * ( l1 * ( 1 - cos(y[:,0]) ) ) 
     V2 = m2 * g * ( l1 * ( 1 - cos(y[:,0]) ) + l2 * ( 1 - cos(y[:,1]) ) )
 
     return (T1 + T2 + V1 + V2)
 
-t = np.linspace(0,8,1000)
-y0 = [0.01, 0, 0.01, 0]
-#E0 = energy(np.matrix(y0))
+t = np.linspace(0,4,1000)
+y0 = [0.0, 0, 0.0, 1]
 
-sol = odeint(evolution, y0, t)
-#E = [E0 for i in t]
+E0 = energy(np.array([y0]))
 
-plt.plot(t, energy(sol))
+y = odeint(evolution, y0, t)
+
+E = [E0 for i in t]
+
+plt.plot(t, y[:,3])
 
 plt.show()
 
