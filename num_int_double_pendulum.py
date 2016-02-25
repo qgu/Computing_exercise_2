@@ -22,7 +22,7 @@ def evolution(y0):
     K[1][0] = G[1][0]*cos_y1_y2
     W = np.matrix(K)
     [y1[2], y1[3]] = W.I * [-m2 * l2 * sin_y1_y2 * y0[3] **2 - ( m1 + m2 ) * g * np.sin(y0[0]),
-           l1 * y0[2] **2 * np.sin(y0[0] - y0[1])] 
+           l1 * y0[2] **2 * np.sin(y0[0] - y0[1]) - g * np.sin(y0[1])] 
     
     return y1
 
