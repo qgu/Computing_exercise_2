@@ -38,11 +38,26 @@ def test_evolution(evolution):
 
 test_evolution(evolution)
 
-t = np.linspace(0,8,100)
-y0 = [0.01, 0, .01, 0]
-sol = odeint(evolution, y0, t)
+def energy(y):
+    x2dot = l1 * cos( y[:,0] ) * y[:,2] + l2 * cos( y[:,1] ) * y[:,3]
+    y2dot = l1 * sin( y[:,0] ) * y[:,2] + l2 * sin( y[:,1] ) * y[:,3]
+    
+    T1 = m1 * ( l1 * y[:,2] ) **2 /2
+    T2 = m2 * ( x2dot**2 + y2dot**2) / 2
+    V1 = m1 * g * ( l1 * ( 1 - cos(y[:,0]) ) ) 
+    V2 = m2 * g * ( l1 * ( 1 - cos(y[:,0]) ) + l2 * ( 1 - cos(y[:,1]) ) )
 
-plt.plot(t,sol[:,0])
+    return (T1 + T2 + V1 + V2)
+
+t = np.linspace(0,8,1000)
+y0 = [0.01, 0, 0.01, 0]
+#E0 = energy(np.matrix(y0))
+
+sol = odeint(evolution, y0, t)
+#E = [E0 for i in t]
+
+plt.plot(t, energy(sol))
+
 plt.show()
 
 
